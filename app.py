@@ -12,6 +12,14 @@ import os
 
 warnings.filterwarnings("ignore")
 
+# Add custom CSS to hide the GitHub icon
+hide_github_icon = """
+#GithubIcon {
+  visibility: hidden;
+}
+"""
+st.markdown(hide_github_icon, unsafe_allow_html=True)
+
 # Function to check if user_details.csv exists and has the correct columns
 def initialize_user_details():
     if not os.path.exists('user_details.csv'):
