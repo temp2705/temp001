@@ -24,7 +24,8 @@ header {
 
 st.markdown(hide_github_icon, unsafe_allow_html=True)
 
-
+import firebase_admin
+from firebase_admin import credentials, firestore
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -38,46 +39,33 @@ import os
 
 warnings.filterwarnings("ignore")
 
+# Initialize Firebase
+cred = credentials.Certificate('consective-candles-5f6113c0c8c2.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
-# Function to check if user_details.csv exists and has the correct columns
-def initialize_user_details():
-    if not os.path.exists('user_details.csv'):
-        # If the file does not exist, create it with the correct columns
-        df = pd.DataFrame(columns=['username', 'password', 'backtest_count'])
-        df.to_csv('user_details.csv', index=False)
-    else:
-        # Ensure the file has the correct columns
-        df = pd.read_csv('user_details.csv')
-        if 'backtest_count' not in df.columns:
-            df['backtest_count'] = 0
-            df.to_csv('user_details.csv', index=False)
 
 # Function to check login
 def check_login(username, password):
-    user_details = pd.read_csv('user_details.csv')
-    user = user_details[(user_details['username'] == username) & (user_details['password'] == password)]
-    if not user.empty:
-        st.session_state.backtest_count = user['backtest_count'].values[0]
+    user_ref = db.collection('users').document(username)
+    user = user_ref.get()
+    if user.exists and user.to_dict()['password'] == password:
+        st.session_state.backtest_count = user.to_dict().get('backtest_count', 0)
         return True
     return False
 
 # Function to register a new user
 def register_user(username, password):
-    user_details = pd.read_csv('user_details.csv')
-    if username in user_details['username'].values:
+    user_ref = db.collection('users').document(username)
+    if user_ref.get().exists:
         return False
-    new_user = pd.DataFrame({'username': [username], 'password': [password], 'backtest_count': [0]})
-    new_user.to_csv('user_details.csv', mode='a', header=False, index=False)
+    user_ref.set({'username': username, 'password': password, 'backtest_count': 0})
     return True
 
 # Function to update the backtest count for a user
 def update_backtest_count(username, count):
-    user_details = pd.read_csv('user_details.csv')
-    user_details.loc[user_details['username'] == username, 'backtest_count'] = count
-    user_details.to_csv('user_details.csv', index=False)
-
-# Initialize user_details.csv if it doesn't exist
-initialize_user_details()
+    user_ref = db.collection('users').document(username)
+    user_ref.update({'backtest_count': count})
 
 
 st.title('Stock Analysis Tool')
@@ -101,6 +89,7 @@ if 'logged_in' not in st.session_state:
     st.session_state.username = ""
     st.session_state.backtest_count = 0
 
+
 # Login/Register form
 if not st.session_state.logged_in:
     login_expander = st.expander("Login")
@@ -114,15 +103,21 @@ if not st.session_state.logged_in:
                 st.success("Login successful!")
             else:
                 st.error("Invalid username or password")
-        #st.write("Don't have an account? Click below to register.")
-                
-                
+        # Registration logic if needed
+        register_expander = st.expander("Register")
+        with register_expander:
+            new_username = st.text_input("New Username")
+            new_password = st.text_input("New Password", type="password")
+            if st.button("Register"):
+                if register_user(new_username, new_password):
+                    st.success("Registration successful! You can now log in.")
+                else:
+                    st.error("Username already exists. Please choose a different username.")
 else:
     st.sidebar.header(f"Welcome, {st.session_state.username}!")
     st.sidebar.write(f"You have {5 - st.session_state.backtest_count} backtests remaining.")
 
-
-    # Function to limit backtests
+    # Limit backtests logic
     if st.session_state.backtest_count < 5:
         # Sidebar for user inputs
         st.sidebar.header('Input Parameters')
