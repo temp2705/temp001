@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "consective-candles",
+  "private_key_id": "5f6113c0c8c2a9b852806993140c847bbf5c34ae",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDOLSuPYzbSe89z\nhmazpYQ2BuaQgRvIG0ctAOgmA16N0uSgbYu9B0JB5F1teuNsFQVuAsrRds+/tEvK\nexpMf4859r2KP46JSN4q3oR4+eiQyh4SdZku74ogXi6wrVbDvgzZ1lo8lpSvIUd6\n/BS3Ak4KHxCJe8VXd3KfcFHxALwAa39qZ5/0yFjNwSVaez/AOb9nlfB0YwacMXfb\nJrSO+vMUMPXyE5ZiHP4DQuVsXsO8OSYgTjOGrOl56yJ4h7Wg3HkTiev55+uVjgt2\nJyJ+47/G/9mFm9UnjjgsxL6wxKYVjvYISMaup3Dxd6VnCufWzrqa0BC/oy2GBVDQ\nadpXSt49AgMBAAECggEAXgmNMi/C6/rrkloNUsfeBxRbqjIw/TKv4o9k0x27TT2Q\n6Lk+QJ/kcRBbKpmfzAbEfLpKToJ93Aa8gORoCNcvePUY20sE1IoHRw9J5bG6iPue\n/rVjglxgKEY8znmpNstiqiLR8ouN0lj/9NCwFA65kHU9wi9RQYUqIx2ESkOW/Cs6\nEw3PT8ilngiti3/Ipkkfev6PrVb3ojBkSxAKQTHcgEf2WGO9bXydkZQRBOVFsaKd\nBYyZAq6dP2XxvNO05t7pE35AOz+Q+cEiuxob+Vuu15og586Naib1dY+HLi+CDPps\ngketnpZnhVw4ghwn1iWx0AVbNGGzEZNbACZLvO+fMwKBgQDoGrcm5uHSy5osTKy9\ni8nkiHQRjvxw62r+twOhjNbpf7AEAGB4R49ZLvrYTx3QPP+dhRu6dNvuQH6abHXM\n5BIvCiaUI+vkQjoPVGz5dJA7wnzbXMQ9iQBgI4EbLmE2rBaOOXKf+rN0e4GGmiDS\nINriMV7tfG0rvvUTlY7NrZrVgwKBgQDjZxrrd+a5v4T3KOJa6UQDEkuNPHxTUNik\nfWMYEV8T/SE/FqHtIqaFz9pAbpLXoSdluPCiYaSnMPPD1Q6/N4+ndPuht0Qbsn5j\nDAfoDOTpBLIx5r9adtNJYEX96HXjprN5QG+puMMAbq8X5ikbEKyI9X4cWV8268mv\njgeZARDxPwKBgQCIGlJX739weo+3dma852HGLvXQ7gW9uW6OWoc4jjvfxE5Uqlvn\nbB707wWNHiefWoWRuuIdnjTxKsSSjRMuyHaZOtyQddf3i5Y8MweL5/xD7rIEeAtj\nAhlERs2IQNQkmRjI4YsDoKDmpx227l5cmYOAq+68WAA0bM+NYl/Q4AIxPQKBgQDM\n6UjBq+6VrHW1ffrSbuYhWmgIIdvp+6zsNCyKMIUbbvp5bfyFwbaKV6zUaI8bjRUC\nPa9gs1n6aksOSTubpQZmoCxrIchWqPXobJvnR08yhk/IVaRScUadFQqc7M7mT33k\nIeM87ceR6SsP/w9FWzYNyCFWjFYXGEtKTVKdVe+dYwKBgBKwp/ltcAa5MdX/Mj6Z\nSXbybGbIjt11ng5yENQg2qd1scicWSPfR8mrsNh84dLPDWRpnMo6SzhbUehl6qrI\nAdaN9u7echGQlBJnhgsDcdq50VtDklPxf1bgMV2zuWngNOXJbwKOzOqIpL48VRHc\nwR7M6xfEwcgzu5Bl9JAG2BuA\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-sujq6@consective-candles.iam.gserviceaccount.com",
+  "client_id": "101851765485686692531",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-sujq6%40consective-candles.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
