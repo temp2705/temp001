@@ -1,5 +1,8 @@
 import streamlit as st
 
+# Set page title and description
+st.set_page_config(page_title='Stock Analysis Tool', page_icon=':chart_with_upwards_trend:')
+
 hide_github_icon = """
 <style>
 .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob, 
@@ -76,8 +79,7 @@ def update_backtest_count(username, count):
 # Initialize user_details.csv if it doesn't exist
 initialize_user_details()
 
-# Set page title and description
-st.set_page_config(page_title='Stock Analysis Tool', page_icon=':chart_with_upwards_trend:')
+
 st.title('Stock Analysis Tool')
 st.write('This app analyzes historical stock data based on user-defined criteria.')
 
