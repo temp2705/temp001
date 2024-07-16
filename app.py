@@ -1,31 +1,4 @@
 import streamlit as st
-
-# Set page title and description
-st.set_page_config(page_title='Stock Analysis Tool', page_icon=':chart_with_upwards_trend:')
-
-hide_github_icon = """
-<style>
-.css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob, 
-.styles_viewerBadge__1yB5_, .viewerBadge_link__1S137, 
-.viewerBadge_text__1JaDK { 
-    display: none; 
-} 
-#MainMenu { 
-    visibility: hidden; 
-} 
-footer { 
-    visibility: hidden; 
-} 
-header { 
-    visibility: hidden; 
-}
-</style>
-"""
-
-st.markdown(hide_github_icon, unsafe_allow_html=True)
-
-import firebase_admin
-from firebase_admin import credentials, firestore
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -39,35 +12,48 @@ import os
 
 warnings.filterwarnings("ignore")
 
-# Initialize Firebase
-cred = credentials.Certificate('consective-candles-5f6113c0c8c2.json')
-firebase_admin.initialize_app(cred)
-db = firestore.client()
-
+# Function to check if user_details.csv exists and has the correct columns
+def initialize_user_details():
+    if not os.path.exists('user_details.csv'):
+        # If the file does not exist, create it with the correct columns
+        df = pd.DataFrame(columns=['username', 'password', 'backtest_count'])
+        df.to_csv('user_details.csv', index=False)
+    else:
+        # Ensure the file has the correct columns
+        df = pd.read_csv('user_details.csv')
+        if 'backtest_count' not in df.columns:
+            df['backtest_count'] = 0
+            df.to_csv('user_details.csv', index=False)
 
 # Function to check login
 def check_login(username, password):
-    user_ref = db.collection('users').document(username)
-    user = user_ref.get()
-    if user.exists and user.to_dict()['password'] == password:
-        st.session_state.backtest_count = user.to_dict().get('backtest_count', 0)
+    user_details = pd.read_csv('user_details.csv')
+    user = user_details[(user_details['username'] == username) & (user_details['password'] == password)]
+    if not user.empty:
+        st.session_state.backtest_count = user['backtest_count'].values[0]
         return True
     return False
 
 # Function to register a new user
 def register_user(username, password):
-    user_ref = db.collection('users').document(username)
-    if user_ref.get().exists:
+    user_details = pd.read_csv('user_details.csv')
+    if username in user_details['username'].values:
         return False
-    user_ref.set({'username': username, 'password': password, 'backtest_count': 0})
+    new_user = pd.DataFrame({'username': [username], 'password': [password], 'backtest_count': [0]})
+    new_user.to_csv('user_details.csv', mode='a', header=False, index=False)
     return True
 
 # Function to update the backtest count for a user
 def update_backtest_count(username, count):
-    user_ref = db.collection('users').document(username)
-    user_ref.update({'backtest_count': count})
+    user_details = pd.read_csv('user_details.csv')
+    user_details.loc[user_details['username'] == username, 'backtest_count'] = count
+    user_details.to_csv('user_details.csv', index=False)
 
+# Initialize user_details.csv if it doesn't exist
+initialize_user_details()
 
+# Set page title and description
+st.set_page_config(page_title='Stock Analysis Tool', page_icon=':chart_with_upwards_trend:')
 st.title('Stock Analysis Tool')
 st.write('This app analyzes historical stock data based on user-defined criteria.')
 
@@ -89,7 +75,6 @@ if 'logged_in' not in st.session_state:
     st.session_state.username = ""
     st.session_state.backtest_count = 0
 
-
 # Login/Register form
 if not st.session_state.logged_in:
     login_expander = st.expander("Login")
@@ -103,21 +88,15 @@ if not st.session_state.logged_in:
                 st.success("Login successful!")
             else:
                 st.error("Invalid username or password")
-        # Registration logic if needed
-        register_expander = st.expander("Register")
-        with register_expander:
-            new_username = st.text_input("New Username")
-            new_password = st.text_input("New Password", type="password")
-            if st.button("Register"):
-                if register_user(new_username, new_password):
-                    st.success("Registration successful! You can now log in.")
-                else:
-                    st.error("Username already exists. Please choose a different username.")
+        #st.write("Don't have an account? Click below to register.")
+
+
 else:
     st.sidebar.header(f"Welcome, {st.session_state.username}!")
     st.sidebar.write(f"You have {5 - st.session_state.backtest_count} backtests remaining.")
 
-    # Limit backtests logic
+
+    # Function to limit backtests
     if st.session_state.backtest_count < 5:
         # Sidebar for user inputs
         st.sidebar.header('Input Parameters')
@@ -169,7 +148,7 @@ else:
             rs = gain / loss
             rsi = 100 - (100 / (1 + rs))
             return rsi
-        
+
         import plotly.graph_objects as go
 
         # Function to plot the gauge chart
@@ -179,7 +158,7 @@ else:
                 color = 'green'
             else:
                 color = 'red'
-            
+
             # Define the figure for the gauge chart
             fig = go.Figure(go.Indicator(
                 mode = "gauge+number",
@@ -220,7 +199,7 @@ else:
         # Enhanced Function to plot equity and drawdown
         def plot_equity_drawdown(equity):
             fig = make_subplots(rows=2, cols=1, shared_xaxes=True, subplot_titles=("Equity Analysis", "Drawdown"), vertical_spacing=0.1)
-            
+
             fig.add_trace(go.Scatter(
                 x=equity.index, 
                 y=equity['Profit/Loss %'], 
@@ -229,7 +208,7 @@ else:
                 fill='tozeroy', 
                 line=dict(color='green', width=1.5)
             ), row=1, col=1)
-            
+
             fig.add_trace(go.Scatter(
                 x=equity.index, 
                 y=equity['Drawdown %'], 
@@ -238,7 +217,7 @@ else:
                 fill='tozeroy', 
                 line=dict(color='firebrick', width=1.5)
             ), row=2, col=1)
-            
+
             fig.update_layout(
                 title='Equity Analysis and Drawdown',
                 xaxis=dict(title='Date', titlefont_size=14, tickfont_size=12),
@@ -247,7 +226,7 @@ else:
                 template='plotly_dark',
                 height=800
             )
-            
+
             return fig
 
         # Function to download data and perform analysis
@@ -460,7 +439,7 @@ else:
                 # Increment the backtest count
                 st.session_state.backtest_count += 1
                 st.sidebar.write(f"You have {5 - st.session_state.backtest_count} backtests left.")
-                
+
 
                 # Display the filtered DataFrame
                 if len(df_consecutive_bullish) > 0:
